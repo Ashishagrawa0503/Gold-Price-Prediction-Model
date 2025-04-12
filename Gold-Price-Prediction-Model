@@ -1,0 +1,27 @@
+import pandas as pd
+import numpy as np
+
+df= pd.read_csv('/content/gld_price_data.csv')
+df.head()
+
+df.isnull().sum()
+
+df=df.drop('Date',axis=1)
+
+from sklearn.model_selection import train_test_split
+x=df.drop('GLD',axis=1)
+y=df['GLD']
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
+
+from sklearn.ensemble import RandomForestRegressor
+rfr=RandomForestRegressor()
+rfr.fit(x_train,y_train)
+y_pred=rfr.predict(x_test)
+
+from sklearn import metrics
+print('MAE:',metrics.mean_absolute_error(y_test,y_pred))
+print('MSE:',metrics.mean_squared_error(y_test,y_pred))
+
+import pickle
+pickle.dump(rfr,open('rfr.pkl','wb'))
+
